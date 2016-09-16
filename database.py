@@ -2,7 +2,7 @@ from peewee import *
 from datetime import date
 
 
-database = SqliteDatabase('peeweetest.db', **{})
+database = SqliteDatabase('database.sqlite', **{})
 
 
 class BaseModel(Model):
@@ -10,17 +10,23 @@ class BaseModel(Model):
         database = database
 
 
-class PeeData(BaseModel):
-    col1 = IntegerField(null=True)
-    col2 = IntegerField(null=True)
-    col3 = IntegerField(null=True)
-    col4 = IntegerField(null=True)
-    col5 = IntegerField(null=True)
-    col6 = DateField(default=date.today())
+class Car(BaseModel):
+    model = CharField()
 
     class Meta:
-        db_table = 'testdata'
+        db_table = "car"
+
+
+class Name(BaseModel):
+    car = ForeignKeyField(Car, related_name="cars")
+    name = CharField()
+
+
+    class Meta:
+        db_table = 'name'
 
 database.connect()
-database.create_table(PeeData, safe=True)
+database.create_tables([Car, Name], safe=True)
 
+add_cars = Car(model="Toyota")
+add_cars.save()
